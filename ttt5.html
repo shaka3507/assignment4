@@ -157,6 +157,16 @@
                 var stale = false
                 // find all the squares using query selector, by class name square
                 const squares = document.querySelectorAll('.square')
+                // const squaresArr = Array.from(squares)
+                // // squaresArr.map((square, index) => {
+                // //     if(square.innerText) {
+                // //         squaresArr[index] = square.innerText
+                // //     } else {
+                // //         squaresArr[index] = '-'
+                // //     }
+                // // })
+
+                // console.log('movesB', squaresArr)
 
                 // iterate over all squares, and add click event listener
                 for(let i = 0; i < squares.length; i++) {
@@ -174,6 +184,13 @@
                                     moves[index] = userTurn
                                 }
                             })
+                            // squaresArr.map((square, index) => {
+                            //     if(square.innerText) {
+                            //         squaresArr[index] = square.innerText
+                            //     } else {
+                            //         squaresArr[index] = '-'
+                            //     }
+                            // })
                             // moves = movesArr(squares)
                             // console.log('moves', moves)
 
@@ -195,7 +212,6 @@
                             winConditions[7] = moves[2] + moves[4] + moves[6]
 
                             console.log('win winConditions: ', winConditions)
-
                             // 3. Update current square inner text
                             if(currentSquare.innerText == '') {
                                 currentSquare.innerText = userTurn
