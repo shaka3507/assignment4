@@ -103,18 +103,12 @@
     </style>
 </head>
 <!-- Instructions -->
-<!-- Copy ttt3.html to ttt4.html. Add the following functionality.
-• Alternate between X’s turn or O’s turn. Put the appropriate symbol (X or O) in the
-square when clicked.
-• Display whose turn it is in the div created previously.
-• A square should not be allowed to be changed once an X or O is placed.
-• Randomly choose whether X or O will start. -->
 
 <body>
     <div class="container-header">
         <div><h1>Tic Tac Toe</h1></div>
         <div class="turn-indicator" id="turn">X or O turn</div>
-        <div class="result" id="result">win condition</div>
+        <div class="result" id="result">GAME ALIVE</div>
     </div>
     <div class="gameboard">
         <script>
@@ -126,43 +120,124 @@ square when clicked.
         </script>
         <script>
             // establish whose turn it is first
-            var randomNum = Math.random(0,1)
             var userTurn
-            if(randomNum > 0.5) {
-                userTurn = 'X'
-            } else {
-                userTurn = 'O'
+            var movesCount = 0
+
+            function randomStart() {
+                let randomNum = Math.random(0,1)
+                if(randomNum > 0.5) {
+                    userTurn = 'X'
+                } else {
+                    userTurn = 'O'
+                }
+                document.getElementById('turn').innerText = 'LUCKY ' + userTurn + ' YOU GO FIRST'
             }
-            document.getElementById('turn').innerText = 'LUCKY ' + userTurn + ' YOU GO FIRST'
+
+            // function movesArr(squares) {
+            //     console.log('squares', squares)
+            //     let result = []
+            //     squares.map(square => {
+            //         if(square.innerText) {
+            //             result.push(square.innerText)
+            //         } else {
+            //             result.push('-')
+            //         }
+            //     })
+            //     return result
+            // }
+
 
             window.onload = function () {
-                let moves = ['-', '-', '-', '-', '-', '-', '-', '-', '-']
-                var winConditions = ['']
+                randomStart()
+                var moves = ['-', '-', '-', '-', '-', '-', '-', '-', '-']
+                let winConditions = []
+                var xWinner = 'XXX'
+                var oWinner = 'OOO'
+                var winnerExists
+                var stale = false
                 // find all the squares using query selector, by class name square
                 const squares = document.querySelectorAll('.square')
+
                 // iterate over all squares, and add click event listener
                 for(let i = 0; i < squares.length; i++) {
                     let currentSquare = squares[i]
+
                     currentSquare.addEventListener('click', function() {
-                        // on current square, add X to inner text
-                        console.log("innerText", currentSquare.innerText)
-                        moves.map((el, index) => {
-                            if (i === index) {
-                                moves[index] = userTurn
+
+                        if(!winnerExists && movesCount < 9) {
+
+                            // 1. INCREMENT MOVE COUNT
+                            movesCount += 1
+                            // 2. UPDATE MOVE ARRAY
+                            moves.map((el, index) => {
+                                if (i === index) {
+                                    moves[index] = userTurn
+                                }
+                            })
+                            // moves = movesArr(squares)
+                            // console.log('moves', moves)
+
+
+                            // 2. update winConditions
+                            
+                            // across win conditions
+                            winConditions[0] = moves.slice(0,3).join('')
+                            winConditions[1] = moves.slice(3,6).join('')
+                            winConditions[2] = moves.slice(6,9).join('')
+
+                            // down win conditions
+                            winConditions[3] = moves[0] + moves[3] + moves[6]
+                            winConditions[4] = moves[1] + moves[4] + moves[7]
+                            winConditions[5] = moves[2] + moves[5] + moves[8]
+
+                            // diagonal
+                            winConditions[6] = moves[0] + moves[4] + moves[8]
+                            winConditions[7] = moves[2] + moves[4] + moves[6]
+
+                            console.log('win winConditions: ', winConditions)
+
+                            // 3. Update current square inner text
+                            if(currentSquare.innerText == '') {
+                                currentSquare.innerText = userTurn
                             }
-                        })
-                        console.log("MOVES UPDATED", moves)
-                        // only if nothing is in the inner text can you place a letter
-                        if(currentSquare.innerText == '') {
-                            currentSquare.innerText = userTurn
-                            if(userTurn === 'X') {
-                                userTurn = 'O'
-                            } else {
-                                userTurn = 'X'
-                            }
-                            // update div saying whose turn it is
-                            document.getElementById('turn').innerText = 'USER ' + userTurn + ' CAN NOW GO'
+
+                            // 4. Check for winner
+
+
+                            winConditions.forEach(winCondition => {
+                                console.log('win condition', winCondition)
+                                if(winCondition === xWinner) {
+                                    winnerExists = 'X'
+                                } else if (winCondition === oWinner) {
+                                    winnerExists = 'O'
+                                }
+                            })
                         }
+
+                        console.log("moves count: ", movesCount)
+
+                        if(winnerExists) {
+                            console.log(" winner exists", winnerExists)
+                            document.getElementById('result').innerText = winnerExists + ' WON!'
+                            document.getElementById('turn').innerText = 'START GAME AGAIN'
+                        }
+
+                        // 5. Switch turn or tap out game
+
+                        if(userTurn === 'X') {
+                                userTurn = 'O'
+                        } else {
+                                userTurn = 'X'
+                        }
+
+                        // update div saying whose turn it is
+                        if(!winnerExists && movesCount < 9) {
+                            document.getElementById('turn').innerText = 'USER ' + userTurn + ' CAN NOW GO'
+                        } else if (!winnerExists && movesCount === 9) {
+                            document.getElementById('result').innerText = 'NO WINNER'
+                            document.getElementById('turn').innerText = 'START GAME AGAIN'
+                        }
+
                     })
                 }
                 const startButton = document.getElementById('start-btn')
@@ -172,7 +247,10 @@ square when clicked.
                         square.innerText = ''
                     })
                     moves = ['-', '-', '-', '-', '-', '-', '-', '-', '-']
-                    console.log('MOVES CLEARED', moves)
+                    winnerExists = undefined
+                    userTurn = undefined
+                    movesCount = 0
+                    randomStart()
                 })
 
             }
