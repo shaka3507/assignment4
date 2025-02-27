@@ -133,23 +133,15 @@
                 document.getElementById('turn').innerText = 'LUCKY ' + userTurn + ' YOU GO FIRST'
             }
 
-            // function movesArr(squares) {
-            //     console.log('squares', squares)
-            //     let result = []
-            //     squares.map(square => {
-            //         if(square.innerText) {
-            //             result.push(square.innerText)
-            //         } else {
-            //             result.push('-')
-            //         }
-            //     })
-            //     return result
-            // }
+            function declareWinner(winner) {
+                document.getElementById('result').innerText = winner + ' WON!'
+                document.getElementById('turn').innerText = 'START GAME AGAIN'
+            }
 
 
             window.onload = function () {
                 randomStart()
-                var moves = ['-', '-', '-', '-', '-', '-', '-', '-', '-']
+                var moves
                 let winConditions = []
                 var xWinner = 'XXX'
                 var oWinner = 'OOO'
@@ -157,43 +149,28 @@
                 var stale = false
                 // find all the squares using query selector, by class name square
                 const squares = document.querySelectorAll('.square')
-                // const squaresArr = Array.from(squares)
-                // // squaresArr.map((square, index) => {
-                // //     if(square.innerText) {
-                // //         squaresArr[index] = square.innerText
-                // //     } else {
-                // //         squaresArr[index] = '-'
-                // //     }
-                // // })
-
-                // console.log('movesB', squaresArr)
 
                 // iterate over all squares, and add click event listener
                 for(let i = 0; i < squares.length; i++) {
                     let currentSquare = squares[i]
 
                     currentSquare.addEventListener('click', function() {
-
+                        // if no winner exists and game alive stale
                         if(!winnerExists && movesCount < 9) {
+                            // add text to square
+                            if(currentSquare.innerText == '') {
+                                currentSquare.innerText = userTurn
+                            }
+                            var moves = Array.from(squares).map(el => {
+                                if(el.innerText) {
+                                    return el.innerText
+                                } else {
+                                    return '-'
+                                }
+                            })
 
                             // 1. INCREMENT MOVE COUNT
                             movesCount += 1
-                            // 2. UPDATE MOVE ARRAY
-                            moves.map((el, index) => {
-                                if (i === index) {
-                                    moves[index] = userTurn
-                                }
-                            })
-                            // squaresArr.map((square, index) => {
-                            //     if(square.innerText) {
-                            //         squaresArr[index] = square.innerText
-                            //     } else {
-                            //         squaresArr[index] = '-'
-                            //     }
-                            // })
-                            // moves = movesArr(squares)
-                            // console.log('moves', moves)
-
 
                             // 2. update winConditions
                             
@@ -211,35 +188,23 @@
                             winConditions[6] = moves[0] + moves[4] + moves[8]
                             winConditions[7] = moves[2] + moves[4] + moves[6]
 
-                            console.log('win winConditions: ', winConditions)
                             // 3. Update current square inner text
                             if(currentSquare.innerText == '') {
                                 currentSquare.innerText = userTurn
                             }
 
                             // 4. Check for winner
-
-
                             winConditions.forEach(winCondition => {
-                                console.log('win condition', winCondition)
                                 if(winCondition === xWinner) {
-                                    winnerExists = 'X'
+                                    declareWinner('X')
                                 } else if (winCondition === oWinner) {
                                     winnerExists = 'O'
+                                    declareWinner('0')
                                 }
                             })
                         }
 
-                        console.log("moves count: ", movesCount)
-
-                        if(winnerExists) {
-                            console.log(" winner exists", winnerExists)
-                            document.getElementById('result').innerText = winnerExists + ' WON!'
-                            document.getElementById('turn').innerText = 'START GAME AGAIN'
-                        }
-
                         // 5. Switch turn or tap out game
-
                         if(userTurn === 'X') {
                                 userTurn = 'O'
                         } else {
@@ -262,7 +227,6 @@
                     squares.forEach(square => {
                         square.innerText = ''
                     })
-                    moves = ['-', '-', '-', '-', '-', '-', '-', '-', '-']
                     winnerExists = undefined
                     userTurn = undefined
                     movesCount = 0
