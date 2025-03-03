@@ -99,11 +99,8 @@
             height: 50px;
             text-transform: uppercase;
         }
-
     </style>
 </head>
-<!-- Instructions -->
-
 <body>
     <div class="container-header">
         <div><h1>Tic Tac Toe</h1></div>
@@ -120,33 +117,34 @@
         </script>
         <script>
             // establish whose turn it is first
-            var userTurn
-            var movesCount = 0
-
-            function randomStart() {
-                let randomNum = Math.random(0,1)
-                if(randomNum > 0.5) {
-                    userTurn = 'X'
-                } else {
-                    userTurn = 'O'
-                }
-                document.getElementById('turn').innerText = 'LUCKY ' + userTurn + ' YOU GO FIRST'
-            }
-
-            function declareWinner(winner) {
-                document.getElementById('result').innerText = winner + ' WON!'
-                document.getElementById('turn').innerText = 'START GAME AGAIN'
-            }
-
-
             window.onload = function () {
+                var userTurn = ''
+                var movesCount = 0
+
+                // HELPER FUNCTIONS
+                // FOR RESTARTING GAME
+                function randomStart() {
+                    let randomNum = Math.random(0,1)
+                    if(randomNum > 0.5) {
+                        userTurn = 'X'
+                    } else {
+                        userTurn = 'O'
+                    }
+                    document.getElementById('result').innerText = 'GAME ALIVE'
+                    document.getElementById('turn').innerText = 'LUCKY ' + userTurn + ' YOU GO FIRST'
+                }
+
+                // FOR DECLARING WINNER ON PAGE UI
+                function declareWinner(winner) {
+                    document.getElementById('result').innerText = winner + ' WON!'
+                    document.getElementById('turn').innerText = 'START GAME AGAIN'
+                }
+
+                // STARTS GAME ON PAGE LOAD
                 randomStart()
-                var moves
-                let winConditions = []
-                var xWinner = 'XXX'
-                var oWinner = 'OOO'
-                var winnerExists
-                var stale = false
+
+                var winConditions = [] // to keep track of player moves
+                var winnerExists = false
                 // find all the squares using query selector, by class name square
                 const squares = document.querySelectorAll('.square')
 
@@ -172,7 +170,7 @@
                             // 1. INCREMENT MOVE COUNT
                             movesCount += 1
 
-                            // 2. update winConditions
+                            // 2. UPDATE winConditions
                             
                             // across win conditions
                             winConditions[0] = moves.slice(0,3).join('')
@@ -184,22 +182,23 @@
                             winConditions[4] = moves[1] + moves[4] + moves[7]
                             winConditions[5] = moves[2] + moves[5] + moves[8]
 
-                            // diagonal
+                            // diagonal win conditions
                             winConditions[6] = moves[0] + moves[4] + moves[8]
                             winConditions[7] = moves[2] + moves[4] + moves[6]
 
-                            // 3. Check for winner
+                            // 3. CHECK for winner
                             winConditions.forEach(winCondition => {
-                                if(winCondition === xWinner) {
+                                if(winCondition === 'XXX') {
+                                    winnerExists = 'X'
                                     declareWinner('X')
-                                } else if (winCondition === oWinner) {
+                                } else if (winCondition === 'OOO') {
                                     winnerExists = 'O'
                                     declareWinner('0')
                                 }
                             })
                         }
 
-                        // 4. Switch turn or tap out game
+                        // 4. SWITCH TURN OR MARK GAME AS STALE
                         if(!winnerExists && movesCount < 9) {
                             if(userTurn === 'X') {
                                 userTurn = 'O'
@@ -214,23 +213,21 @@
 
                     })
                 }
-                // start button event
+                // ADD EVENT TO START BUTTON
                 const startButton = document.getElementById('start-btn')
                 startButton.addEventListener('click', () => {
                     squares.forEach(square => {
                         square.innerText = ''
                     })
-                    winnerExists = undefined
-                    userTurn = undefined
+                    winnerExists = false
+                    userTurn = ''
                     movesCount = 0
                     randomStart()
                 })
 
             }
-
         </script>
     </div>
-            <button id="start-btn">start game</button>
+    <button id="start-btn">start game</button>
 </body>
-
 </html>
